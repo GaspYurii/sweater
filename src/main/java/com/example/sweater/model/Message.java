@@ -1,4 +1,4 @@
-package com.example.sweater.models;
+package com.example.sweater.model;
 
 
 import jakarta.persistence.*;
