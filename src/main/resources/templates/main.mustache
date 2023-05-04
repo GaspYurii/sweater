@@ -5,7 +5,12 @@
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
 </head>
 <body>
-<div>Hello, {{name}}!</div>
+<a href="registration">Registration</a>
+<form action="/logout" method="post">
+    <input type="hidden" name="_csrf" value="{{_csrf.token}}" />
+    <input type="submit" value="Sign Out"/>
+</form>
+<div>Hello, user!</div>
 <div><a href="messages">Messages</a> </div>
 </body>
 </html>

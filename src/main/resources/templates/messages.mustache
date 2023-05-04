@@ -5,14 +5,20 @@
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
 </head>
 <body>
+<form action="/logout" method="post">
+    <input type="hidden" name="_csrf" value="{{_csrf.token}}" />
+    <input type="submit" value="Sign Out"/>
+</form>
 <div>
     <form method="post">
         <input type="text" name="text" placeholder="Enter message">
         <input type="text" name="tag" placeholder="Tag">
+        <input type="hidden" name="_csrf" value="{{_csrf.token}}" />
         <button type="submit">Add message</button>
     </form>
     <form method="post" action="filter">
         <input type="text" name="filter" placeholder="Enter tag as filter">
+        <input type="hidden" name="_csrf" value="{{_csrf.token}}" />
         <button type="submit">Filter messages</button>
     </form>
 </div>
