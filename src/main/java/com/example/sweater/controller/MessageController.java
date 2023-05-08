@@ -2,13 +2,15 @@ package com.example.sweater.controller;
 
 import com.example.sweater.constant.UrlPath;
 import com.example.sweater.model.Message;
+import com.example.sweater.model.SecurityUser;
 import com.example.sweater.repository.MessageRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.User;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.Map;
@@ -26,8 +28,12 @@ public class MessageController {
     }
 
     @PostMapping(UrlPath.MESSAGES)
-    public String addMessage(@RequestParam String text, @RequestParam String tag, Map<String, Object> model) {
-        messageRepository.save(new Message(text, tag));
+    public String addMessage(
+            @AuthenticationPrincipal SecurityUser user,
+            @RequestParam String text,
+            @RequestParam String tag,
+            Map<String, Object> model) {
+        messageRepository.save(new Message(text, tag, user.getUser()));
 
         initMessages(model);
         return "messages";
