@@ -5,6 +5,7 @@ import com.example.sweater.service.JpaUserDetailsManager;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.annotation.Order;
+import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -12,10 +13,9 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 
-import static org.springframework.security.config.Customizer.withDefaults;
-
 @Configuration
 @EnableWebSecurity
+@EnableMethodSecurity
 public class WebSecurityConfig {
 
     private final JpaUserDetailsManager jpaUserDetailsManager;
@@ -43,9 +43,9 @@ public class WebSecurityConfig {
         return http
                 .authorizeHttpRequests(auth -> {
                             auth.requestMatchers("/").permitAll();
-                            auth.requestMatchers("/error").permitAll();
+                            auth.requestMatchers(UrlPath.ERROR).permitAll();
                             auth.requestMatchers(UrlPath.REGISTRATION).permitAll();
-                            auth.requestMatchers("/login").permitAll();
+                            auth.requestMatchers(UrlPath.LOGIN).permitAll();
                             auth.anyRequest().authenticated();
                         }
                 )
