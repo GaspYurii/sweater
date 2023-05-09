@@ -45,10 +45,18 @@ public class WebSecurityConfig {
                             auth.requestMatchers("/").permitAll();
                             auth.requestMatchers("/error").permitAll();
                             auth.requestMatchers(UrlPath.REGISTRATION).permitAll();
+                            auth.requestMatchers("/login").permitAll();
                             auth.anyRequest().authenticated();
                         }
                 )
-                .formLogin(withDefaults())
+                .formLogin()
+                .loginPage("/login")
+                .and()
+                .rememberMe()
+                .and()
+                .logout()
+                .permitAll()
+                .and()
                 .build();
     }
 

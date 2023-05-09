@@ -24,7 +24,7 @@ public class SecurityUser implements UserDetails {
 
     @Override
     public String getUsername() {
-        return user.getUsername();
+        return user != null? user.getUsername() : "<none>";
     }
 
     @Override
