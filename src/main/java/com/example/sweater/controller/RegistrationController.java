@@ -27,7 +27,11 @@ public class RegistrationController {
     }
 
     @PostMapping
-    public String registration(@RequestParam String username, @RequestParam String password, Model model) {
+    public String registration(@RequestParam String username, @RequestParam String password, Model model) throws Exception {
+        if (userRepository.findByUsernameIgnoreCase(username).isPresent()) {
+            model.addAttribute("message", "The user already exists");
+            return "registration";
+        }
         userRepository.save(new User(username, encoder.encode(password)));
         List<User> users = userRepository.findAll();
         model.addAttribute("users", users);

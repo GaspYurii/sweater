@@ -38,7 +38,6 @@ public class MessageController {
     }
 
     @PostMapping(UrlPath.FILTER)
-    @PreAuthorize("hasRole('ADMIN')")
     public String filter(@RequestParam String filter, Model model) {
         Iterable<Message> messages;
         if (filter != null && !filter.isEmpty()) {
