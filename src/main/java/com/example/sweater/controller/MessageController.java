@@ -5,19 +5,27 @@ import com.example.sweater.model.Message;
 import com.example.sweater.model.SecurityUser;
 import com.example.sweater.repository.MessageRepository;
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.io.File;
+import java.io.IOException;
+import java.util.UUID;
 
 @Controller
 @RequiredArgsConstructor
 public class MessageController {
 
     private final MessageRepository messageRepository;
+
+    @Value("${upload.path}")
+    private String uploadPath;
 
     @GetMapping(UrlPath.MESSAGES)
     public String messages(Model model) {
@@ -30,8 +38,24 @@ public class MessageController {
             @AuthenticationPrincipal SecurityUser user,
             @RequestParam String text,
             @RequestParam String tag,
-            Model model) {
-        messageRepository.save(new Message(text, tag, user.getUser()));
+            @RequestParam("file") MultipartFile file,
+            Model model) throws IOException {
+
+        Message message = new Message(text, tag, user.getUser());
+
+        if (file != null && !file.getOriginalFilename().isEmpty()) {
+            File uploadDir = new File((uploadPath));
+
+            if (!uploadDir.exists()) uploadDir.mkdir();
+
+            String resultFilename = UUID.randomUUID() + "." + file.getOriginalFilename();
+
+            file.transferTo(new File(uploadPath + "/" + resultFilename));
+
+            message.setFilename(resultFilename);
+        }
+
+        messageRepository.save(message);
 
         initMessages(model);
         return "messages";
