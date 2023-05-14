@@ -1,9 +1,8 @@
 <#import "parts/common.ftlh" as c>
 
 <@c.page>
-<a href="registration">Registration</a>
+<h3>Hello, guest!</h3>
+<a href="registration">Sign up</a>
 <a href="login">Sign in</a>
-<div><a href="/users">Users list</a></div>
-<div>Hello, user!</div>
-<div><a href="messages">Messages</a> </div>
+<div>This is simple clone of Twitter</div>
 </@c.page>

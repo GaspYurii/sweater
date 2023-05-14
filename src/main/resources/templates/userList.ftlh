@@ -1,13 +1,11 @@
 <#import "parts/common.ftlh" as c>
-<#import "parts/login.ftlh" as l>
 
 <@c.page>
-<div><@l.logout /></div>
 
 <div><strong>Users</strong></div>
 <table>
-    <thead>
-    <tr><th>ID</th><th>USERNAME</th><th>ROLES</th><th></th></tr>
+    <thead class="text-center">
+    <tr class=><th>ID</th><th>USERNAME</th><th>ROLES</th><th></th></tr>
     </thead>
     <tbody>
     <#list users as user>

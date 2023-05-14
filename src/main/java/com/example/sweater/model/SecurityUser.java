@@ -55,4 +55,8 @@ public class SecurityUser implements UserDetails {
     public User getUser() {
         return this.user;
     }
+
+    public boolean isAdmin() {
+        return user.isAdmin();
+    }
 }

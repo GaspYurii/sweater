@@ -43,5 +43,8 @@ public class User {
         roles.add(role);
     }
 
+    public boolean isAdmin() {
+        return roles.contains(Role.ADMIN);
+    }
 
 }

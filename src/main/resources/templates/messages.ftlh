@@ -2,36 +2,50 @@
 <#import "parts/login.ftlh" as l>
 
 <@c.page>
-<div><@l.logout /></div>
-<div>
-    <form method="post" enctype="multipart/form-data">
-        <input type="text" name="text" placeholder="Enter message">
-        <input type="text" name="tag" placeholder="Tag">
-        <input type="file" name="file">
-        <input type="hidden" name="_csrf" value="${_csrf.token}" />
-        <button type="submit">Add message</button>
-    </form>
-    <form method="post" action="filter">
-        <input type="text" name="filter" placeholder="Enter tag as filter">
-        <input type="hidden" name="_csrf" value="${_csrf.token}" />
-        <button type="submit">Filter messages</button>
-    </form>
-</div>
-<div><strong>Messages</strong></div>
-<table>
-    <thead>
-    <tr><th>ID</th><th>TAG</th><th>MESSAGE</th><th>AUTHOR</th><th>IMAGE</th></tr>
-    </thead>
-    <tbody>
-    <#list messages as m>
-    <tr>
-        <td>${m.id}</td>
-        <td>${m.tag}</td>
-        <td>${m.text}</td>
-        <td>${m.authorName}</td>
-        <td><#if m.filename??><img src="/img/${m.filename}"></#if></td>
-    </tr>
-    </#list>
-    </tbody>
-</table>
+    <div>
+        <form method="post" action="filter" class="row row-cols-sm-auto g-3 align-items-center">
+            <input type="hidden" name="_csrf" value="${_csrf.token}"/>
+            <div class="col-auto">
+                <input type="text" name="filter" placeholder="Search messages by tag" class="form-control">
+            </div>
+            <div class="col-sm-3">
+                <button type="submit" class="btn btn-primary">Search</button>
+            </div>
+        </form>
+        <form method="post" enctype="multipart/form-data" class="row mb-3 mt-3">
+            <input type="hidden" name="_csrf" value="${_csrf.token}"/>
+            <div class="col-sm-6">
+                <div class="input-group mt-2">
+                    <input type="text" name="text" placeholder="Enter message" class="form-control">
+                </div>
+                <div class="input-group mt-2">
+                    <input type="text" name="tag" placeholder="Enter tag" class="form-control">
+                </div>
+                <div class="input-group mt-2">
+                    <input type="file" name="file" class="form-control">
+                    <button class="btn btn-outline-secondary" type="submit">Add message</button>
+                </div>
+            </div>
+        </form>
+    </div>
+
+    <div class="mt-3"><h4>Messages</h4></div>
+
+    <div class="row row-cols-1 row-cols-md-3 g-4">
+        <#list messages as m>
+            <div class="col">
+                <div class="card" >
+                    <#if m.filename??><img src="/img/${m.filename}"></#if>
+                    <div class="card-body">
+                        <h5 class="card-title">${m.tag}</h5>
+                        <p class="card-text">${m.text}</p>
+                        <div class="card-footer">
+                            By ${m.authorName}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </#list>
+
+    </div>
 </@c.page>
