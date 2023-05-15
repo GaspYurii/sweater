@@ -44,6 +44,7 @@ public class WebSecurityConfig {
                 .authorizeHttpRequests(auth -> {
                             auth.requestMatchers("/").permitAll();
                             auth.requestMatchers("/static/**").permitAll();
+                            auth.requestMatchers("/activate/**").permitAll();
                             auth.requestMatchers(UrlPath.ERROR).permitAll();
                             auth.requestMatchers(UrlPath.REGISTRATION).permitAll();
                             auth.requestMatchers(UrlPath.LOGIN).permitAll();

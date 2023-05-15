@@ -17,6 +17,8 @@ public class User {
     private String username;
     private String password;
     private boolean active;
+    private String email;
+    private String activationCode;
 
     @ElementCollection(targetClass = Role.class, fetch = FetchType.EAGER)
     @CollectionTable(name = "user_role", joinColumns = @JoinColumn(name = "user_id"))
@@ -29,7 +31,7 @@ public class User {
     public User(String username, String password) {
         this.username = username;
         this.password = password;
-        this.active = true;
+        this.active = false;
         this.roles = new HashSet<>();
         this.roles.add(Role.USER);
     }

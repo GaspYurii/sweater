@@ -1,32 +1,62 @@
 package com.example.sweater.service;
 
-import com.example.sweater.model.Role;
 import com.example.sweater.model.User;
 import com.example.sweater.repository.UserRepository;
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+
+import java.util.UUID;
 
 @Service
 @Slf4j
 public class UserService {
     private final UserRepository userRepository;
     private final PasswordEncoder encoder;
+    private final MailSender mailSender;
 
-    public UserService(UserRepository userRepository) {
+    @Value("${server.url}")
+    private String serverUrl;
+
+    public UserService(UserRepository userRepository, MailSender mailSender) {
         this.userRepository = userRepository;
+        this.mailSender = mailSender;
         this.encoder = new BCryptPasswordEncoder();
     }
 
     public boolean createUser(User user) {
         String username = user.getUsername();
         if (userRepository.findByUsernameIgnoreCase(username).isPresent()) return false;
-        user.setActive(true);
+
         user.setPassword(encoder.encode(user.getPassword()));
-        user.getRoles().add(Role.USER);
+        user.setActivationCode(UUID.randomUUID().toString());
+
+        userRepository.save(user);
         log.info("Saving new User {}", username);
+
+        if (!StringUtils.isEmpty(user.getEmail())) {
+            String message = "Hello, " + user.getUsername() + "\n" +
+                    "Welcome to Sweater. Please, visit next link: " +
+                    serverUrl + "/activate/" + user.getActivationCode();
+            mailSender.send(user.getEmail(), "Activation code", message);
+        }
+
+        return true;
+    }
+
+    public boolean activateUser(String code) {
+        User user = userRepository.findByActivationCode(code);
+
+        if (user == null) return false;
+
+        user.setActive(true);
+        user.setActivationCode(null);
+
+        userRepository.save(user);
+
         return true;
     }
 }
