@@ -3,7 +3,7 @@
 
 <@c.page>
     <div>
-        <form method="post" action="filter" class="row row-cols-sm-auto g-3 align-items-center">
+        <form method="get" action="messages" class="row row-cols-sm-auto g-3 align-items-center">
             <input type="hidden" name="_csrf" value="${_csrf.token}"/>
             <div class="col-auto">
                 <input type="text" name="filter" placeholder="Search messages by tag" class="form-control">

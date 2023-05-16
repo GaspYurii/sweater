@@ -1,15 +1,19 @@
 package com.example.sweater.service;
 
+import com.example.sweater.model.Role;
 import com.example.sweater.model.User;
 import com.example.sweater.repository.UserRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.util.Arrays;
+import java.util.Map;
+import java.util.Set;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @Service
 @Slf4j
@@ -21,10 +25,10 @@ public class UserService {
     @Value("${server.url}")
     private String serverUrl;
 
-    public UserService(UserRepository userRepository, MailSender mailSender) {
+    public UserService(UserRepository userRepository, MailSender mailSender, PasswordEncoder encoder) {
         this.userRepository = userRepository;
         this.mailSender = mailSender;
-        this.encoder = new BCryptPasswordEncoder();
+        this.encoder = encoder;
     }
 
     public boolean createUser(User user) {
@@ -33,6 +37,7 @@ public class UserService {
 
         user.setPassword(encoder.encode(user.getPassword()));
         user.setActivationCode(UUID.randomUUID().toString());
+        user.addRole(Role.USER);
 
         userRepository.save(user);
         log.info("Saving new User {}", username);
@@ -58,5 +63,22 @@ public class UserService {
         userRepository.save(user);
 
         return true;
+    }
+
+    public void saveUser(User user, String username, Map<String, String> form) {
+        user.setUsername(username);
+        Set<String> roles = Arrays.stream(Role.values())
+                .map(Role::name)
+                .collect(Collectors.toSet());
+
+        user.getRoles().clear();
+
+        for (String key : form.keySet()) {
+            if (roles.contains(key)) {
+                user.getRoles().add(Role.valueOf(key));
+            }
+        }
+
+        userRepository.save(user);
     }
 }

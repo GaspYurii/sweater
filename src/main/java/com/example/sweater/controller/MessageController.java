@@ -1,6 +1,5 @@
 package com.example.sweater.controller;
 
-import com.example.sweater.constant.UrlPath;
 import com.example.sweater.model.Message;
 import com.example.sweater.model.SecurityUser;
 import com.example.sweater.repository.MessageRepository;
@@ -11,6 +10,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -20,6 +20,7 @@ import java.util.UUID;
 
 @Controller
 @RequiredArgsConstructor
+@RequestMapping("/messages")
 public class MessageController {
 
     private final MessageRepository messageRepository;
@@ -27,13 +28,20 @@ public class MessageController {
     @Value("${upload.path}")
     private String uploadPath;
 
-    @GetMapping(UrlPath.MESSAGES)
-    public String messages(Model model) {
-        initMessages(model);
+    @GetMapping
+    public String getMessages(@RequestParam(required = false, defaultValue = "") String filter, Model model) {
+        Iterable<Message> messages;
+        if (filter != null && !filter.isEmpty()) {
+            messages = messageRepository.findByTag(filter);
+        } else {
+            messages = messageRepository.findAll();
+        }
+
+        model.addAttribute("messages", messages);
         return "messages";
     }
 
-    @PostMapping(UrlPath.MESSAGES)
+    @PostMapping
     public String addMessage(
             @AuthenticationPrincipal SecurityUser user,
             @RequestParam String text,
@@ -58,19 +66,6 @@ public class MessageController {
         messageRepository.save(message);
 
         initMessages(model);
-        return "messages";
-    }
-
-    @PostMapping(UrlPath.FILTER)
-    public String filter(@RequestParam String filter, Model model) {
-        Iterable<Message> messages;
-        if (filter != null && !filter.isEmpty()) {
-            messages = messageRepository.findByTag(filter);
-        } else {
-            messages = messageRepository.findAll();
-        }
-
-        model.addAttribute("messages", messages);
         return "messages";
     }
 

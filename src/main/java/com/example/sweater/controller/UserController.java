@@ -4,13 +4,14 @@ import com.example.sweater.constant.UrlPath;
 import com.example.sweater.model.Role;
 import com.example.sweater.model.User;
 import com.example.sweater.repository.UserRepository;
+import com.example.sweater.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.Map;
 
 @Controller
 @PreAuthorize("hasAuthority('ADMIN')")
@@ -18,6 +19,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 @RequiredArgsConstructor
 public class UserController {
     private final UserRepository userRepository;
+    private final UserService userService;
 
     @GetMapping
     public String getUsers(Model model) {
@@ -26,11 +28,23 @@ public class UserController {
     }
 
     @GetMapping("/{user}")
-    public String editUser(@PathVariable User user, Model model) {
-        model
-                .addAttribute("user", user)
-                .addAttribute("roles", Role.values());
+    public String editUser(
+            Model model,
+            @PathVariable User user
+    ) {
+        model.addAttribute("user", user);
+        model.addAttribute("roles", Role.values());
+
         return "userEdit";
     }
 
+    @PostMapping
+    public String saveUser(
+            @RequestParam String username,
+            @RequestParam("userId") User user,
+            @RequestParam Map<String, String> form
+    ) {
+        userService.saveUser(user, username, form);
+        return "redirect:users";
+    }
 }
