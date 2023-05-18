@@ -33,7 +33,7 @@ public class UserService {
 
     public boolean createUser(User user) {
         String username = user.getUsername();
-        if (userRepository.findByUsernameIgnoreCase(username).isPresent()) return false;
+        if (userRepository.findByUsernameIgnoreCase(username).isPresent()) { return false; }
 
         user.setPassword(encoder.encode(user.getPassword()));
         user.setActivationCode(UUID.randomUUID().toString());
