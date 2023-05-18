@@ -2,7 +2,9 @@ package com.example.sweater.model;
 
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotBlank;
 import lombok.Data;
+import org.hibernate.validator.constraints.Length;
 
 import static jakarta.persistence.GenerationType.AUTO;
 
@@ -15,8 +17,11 @@ public class Message {
     private Integer id;
 
     @Column(nullable = false)
+    @NotBlank(message = "Please fill the message")
+    @Length(max = 2048, message = "Message too long (more than 2kb")
     private String text;
-
+    @Length(max = 255, message = "Tag too long (more than 255")
+    @NotBlank(message = "Please fill the tag")
     private String tag;
 
     private String filename;

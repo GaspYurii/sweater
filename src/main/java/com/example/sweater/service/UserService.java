@@ -22,8 +22,8 @@ public class UserService {
     private final PasswordEncoder encoder;
     private final MailSender mailSender;
 
-    @Value("${server.url}")
-    private String serverUrl;
+    @Value("${hostname}")
+    private String hostname;
 
     public UserService(UserRepository userRepository, MailSender mailSender, PasswordEncoder encoder) {
         this.userRepository = userRepository;
@@ -45,7 +45,7 @@ public class UserService {
         if (!StringUtils.isEmpty(user.getEmail())) {
             String message = "Hello, " + user.getUsername() + "\n" +
                     "Welcome to Sweater. Please, visit next link: " +
-                    serverUrl + "/activate/" + user.getActivationCode();
+                    hostname + "/activate/" + user.getActivationCode();
             mailSender.send(user.getEmail(), "Activation code", message);
         }
 
