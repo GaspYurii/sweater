@@ -1,11 +1,15 @@
 package com.example.sweater.service;
 
 import com.example.sweater.model.Role;
+import com.example.sweater.model.SecurityUser;
 import com.example.sweater.model.User;
 import com.example.sweater.repository.UserRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -33,7 +37,9 @@ public class UserService {
 
     public boolean createUser(User user) {
         String username = user.getUsername();
-        if (userRepository.findByUsernameIgnoreCase(username).isPresent()) { return false; }
+        if (userRepository.findByUsernameIgnoreCase(username).isPresent()) {
+            return false;
+        }
 
         user.setPassword(encoder.encode(user.getPassword()));
         user.setActivationCode(UUID.randomUUID().toString());
@@ -55,7 +61,9 @@ public class UserService {
     public boolean activateUser(String code) {
         User user = userRepository.findByActivationCode(code);
 
-        if (user == null) return false;
+        if (user == null) {
+            return false;
+        }
 
         user.setActive(true);
         user.setActivationCode(null);
@@ -81,4 +89,6 @@ public class UserService {
 
         userRepository.save(user);
     }
+
+
 }
