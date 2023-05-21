@@ -59,4 +59,8 @@ public class SecurityUser implements UserDetails {
     public boolean isAdmin() {
         return user.isAdmin();
     }
+
+    public String getEmail() {
+        return user.getEmail();
+    }
 }

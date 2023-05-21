@@ -1,15 +1,11 @@
 package com.example.sweater.service;
 
 import com.example.sweater.model.Role;
-import com.example.sweater.model.SecurityUser;
 import com.example.sweater.model.User;
 import com.example.sweater.repository.UserRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -48,14 +44,18 @@ public class UserService {
         userRepository.save(user);
         log.info("Saving new User {}", username);
 
+        sendActivationCodeToUserEmail(user);
+
+        return true;
+    }
+
+    private void sendActivationCodeToUserEmail(User user) {
         if (!StringUtils.isEmpty(user.getEmail())) {
             String message = "Hello, " + user.getUsername() + "\n" +
                     "Welcome to Sweater. Please, visit next link: " +
                     hostname + "/activate/" + user.getActivationCode();
             mailSender.send(user.getEmail(), "Activation code", message);
         }
-
-        return true;
     }
 
     public boolean activateUser(String code) {
@@ -91,4 +91,25 @@ public class UserService {
     }
 
 
+    public void updateProfile(User user, String password, String email) {
+        if (!StringUtils.isEmpty(password)) {
+            user.setPassword(encoder.encode(password));
+        }
+
+        String userEmail = user.getEmail();
+
+        boolean isEmailChanged = (email != null && !email.equals(userEmail)) ||
+                (userEmail != null && !userEmail.equals(email));
+
+        if (isEmailChanged) {
+            user.setEmail(email);
+
+            if (!StringUtils.isEmpty(user.getEmail())) {
+                user.setActivationCode(UUID.randomUUID().toString());
+                sendActivationCodeToUserEmail(user);
+            }
+        }
+
+        userRepository.save(user);
+    }
 }

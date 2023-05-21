@@ -19,6 +19,9 @@
                 <li class="nav-item">
                     <a class="nav-link" aria-current="page" href="/messages/${currentUserId}">My messages</a>
                 </li>
+                <li class="nav-item">
+                    <a class="nav-link" aria-current="page" href="/profile">Profile</a>
+                </li>
                 </#if>
                 <#if isAdmin>
                 <li class="nav-item">
@@ -28,7 +31,9 @@
             </ul>
 
             <div class="navbar-text me-2">${name}</div>
-            <@l.logout />
+            <#if user??>
+                <@l.logout />
+            </#if>
     </div>
     </div>
 </nav>
