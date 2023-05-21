@@ -8,8 +8,8 @@
             <div class="card" >
                 <#if message.filename??><img src="/img/${message.filename}"></#if>
                 <div class="card-body">
-                    <h5 class="card-title">${message.tag}</h5>
-                    <p class="card-text">#${message.text}</p>
+                    <h5 class="card-title">#${message.tag}</h5>
+                    <p class="card-text">${message.text}</p>
                     <div class="card-footer">
                         <a href="/messages/${message.author.id}">${message.authorName}</a>
                         <#if message.author.id == currentUserId>

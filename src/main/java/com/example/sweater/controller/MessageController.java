@@ -21,6 +21,7 @@ import java.util.Set;
 @RequiredArgsConstructor
 @RequestMapping({"/messages", "/messages/"})
 public class MessageController {
+    public static final String MESSAGES ="messages";
 
     private final MessageRepository messageRepository;
     private final MessageService messageService;
@@ -29,8 +30,8 @@ public class MessageController {
     public String getMessages(@RequestParam(required = false, defaultValue = "") String filter, Model model) {
         Iterable<Message> messages = messageService.getMessages(filter);
 
-        model.addAttribute("messages", messages);
-        return "messages";
+        model.addAttribute(MESSAGES, messages);
+        return MESSAGES;
     }
 
     @PostMapping
@@ -45,9 +46,9 @@ public class MessageController {
         messageService.addMessage(securityUser, message, bindingResult, model, file);
 
         Iterable<Message> messages = messageRepository.findAll();
-        model.addAttribute("messages", messages);
+        model.addAttribute(MESSAGES, messages);
 
-        return "messages";
+        return MESSAGES;
     }
 
     @GetMapping("/{user}")
@@ -59,7 +60,11 @@ public class MessageController {
     ) {
         Set<Message> messages = user.getMessages();
 
-        model.addAttribute("messages", messages);
+        model.addAttribute("userChannel", user);
+        model.addAttribute("subscriptionsCount", user.getSubscriptions().size());
+        model.addAttribute("subscribersCount", user.getSubscribers().size());
+        model.addAttribute("isSubscriber", user.getSubscribers().contains(currentUser.getUser()));
+        model.addAttribute(MESSAGES, messages);
         model.addAttribute("message", message);
         model.addAttribute("isCurrentUser", currentUser.getUser().equals(user));
 

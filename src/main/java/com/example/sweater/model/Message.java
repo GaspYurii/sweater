@@ -6,20 +6,19 @@ import jakarta.validation.constraints.NotBlank;
 import lombok.Data;
 import org.hibernate.validator.constraints.Length;
 
-import static jakarta.persistence.GenerationType.AUTO;
-
 @Entity
 @Data
 @Table(name = "messages")
 public class Message {
     @Id
-    @GeneratedValue(strategy = AUTO)
-    private Integer id;
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    private Long id;
 
     @Column(nullable = false)
     @NotBlank(message = "Please fill the message")
     @Length(max = 2048, message = "Message too long (more than 2kb")
     private String text;
+
     @Length(max = 255, message = "Tag too long (more than 255")
     @NotBlank(message = "Please fill the tag")
     private String tag;

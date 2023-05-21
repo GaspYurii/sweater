@@ -5,15 +5,11 @@ import com.example.sweater.model.SecurityUser;
 import com.example.sweater.model.User;
 import com.example.sweater.repository.UserRepository;
 import com.example.sweater.service.UserService;
-import jakarta.validation.Valid;
-import jakarta.validation.constraints.Email;
 import lombok.RequiredArgsConstructor;
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -24,13 +20,15 @@ import java.util.Map;
 @Controller
 @RequiredArgsConstructor
 public class UserController {
+    private static final String USERS = "users";
+
     private final UserRepository userRepository;
     private final UserService userService;
 
     @GetMapping("/users")
     @PreAuthorize("hasAuthority('ADMIN')")
     public String getUsers(Model model) {
-        model.addAttribute("users", userRepository.findAll());
+        model.addAttribute(USERS, userRepository.findAll());
         return "userList";
     }
 
@@ -76,5 +74,40 @@ public class UserController {
             userService.updateProfile(currentUser.getUser(), password, email);
 
         return "redirect:profile";
+    }
+
+    @GetMapping("/users/subscribe/{user}")
+    public String subscribe(
+            @AuthenticationPrincipal SecurityUser currentUser,
+            @PathVariable User user) {
+        userService.subscribe(currentUser.getUser(), user);
+
+        return "redirect:/messages/" + user.getId();
+    }
+
+    @GetMapping("/users/unsubscribe/{user}")
+    public String unSubscribe(
+            @AuthenticationPrincipal SecurityUser currentUser,
+            @PathVariable User user) {
+        userService.unSubscribe(currentUser.getUser(), user);
+
+        return "redirect:/messages/" + user.getId();
+    }
+
+    @GetMapping("/users/{type}/{user}/list")
+    public String userList(
+            @PathVariable(name = "type") String type,
+            @PathVariable(name = "user") User user,
+            Model model) {
+        model.addAttribute("userChannel", user);
+        model.addAttribute("type", type);
+
+        if ("subscriptions".equals(type)) {
+            model.addAttribute(USERS, user.getSubscriptions());
+        } else {
+            model.addAttribute(USERS, user.getSubscribers());
+        }
+
+        return "subscriptions";
     }
 }

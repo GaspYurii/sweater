@@ -1,6 +1,5 @@
 package com.example.sweater.controller;
 
-import com.example.sweater.constant.UrlPath;
 import com.example.sweater.model.User;
 import com.example.sweater.service.UserService;
 import jakarta.validation.Valid;
@@ -20,14 +19,17 @@ import java.util.Map;
 
 @RequiredArgsConstructor
 public class RegistrationController {
+    private static final String REGISTRATION = "registration";
+    public static final String MESSAGE = "message";
+
     private final UserService userService;
 
-    @GetMapping(UrlPath.REGISTRATION)
+    @GetMapping("/" + REGISTRATION)
     public String registration() {
-        return "registration";
+        return REGISTRATION;
     }
 
-    @PostMapping(UrlPath.REGISTRATION)
+    @PostMapping("/" + REGISTRATION)
     public String registration(
             @RequestParam("password2") String passwordConfirmation,
             @Valid User user,
@@ -50,12 +52,12 @@ public class RegistrationController {
 
             model.mergeAttributes(errors);
 
-            return "registration";
+            return REGISTRATION;
         }
 
         if (!userService.createUser(user)) {
-            model.addAttribute("message", "The user already exists");
-            return "registration";
+            model.addAttribute(MESSAGE, "The user already exists");
+            return REGISTRATION;
         }
 
         return "redirect:login";
@@ -67,10 +69,10 @@ public class RegistrationController {
 
         if (isActivated) {
             model.addAttribute("messageType", "success");
-            model.addAttribute("message", "User successfully activated");
+            model.addAttribute(MESSAGE, "User successfully activated");
         } else {
             model.addAttribute("messageType", "danger");
-            model.addAttribute("message", "Activation code is not found!");
+            model.addAttribute(MESSAGE, "Activation code is not found!");
         }
 
         return "login";

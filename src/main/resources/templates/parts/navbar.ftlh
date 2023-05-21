@@ -30,10 +30,9 @@
                 </#if>
             </ul>
 
-            <div class="navbar-text me-2">${name}</div>
-            <#if user??>
-                <@l.logout />
-            </#if>
+            <div class="navbar-text me-2"><#if user??>${name}<#else>Please, login!</#if></div>
+
+            <@l.logout />
     </div>
     </div>
 </nav>

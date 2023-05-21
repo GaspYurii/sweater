@@ -1,7 +1,5 @@
 package com.example.sweater.config;
 
-import com.example.sweater.constant.UrlPath;
-import com.example.sweater.service.JpaUserDetailsManager;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.annotation.Order;
@@ -17,37 +15,30 @@ import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 @EnableWebSecurity
 @EnableMethodSecurity
 public class WebSecurityConfig {
-
-    private final JpaUserDetailsManager jpaUserDetailsManager;
-
-
-    public WebSecurityConfig(JpaUserDetailsManager jpaUserDetailsManager) {
-        this.jpaUserDetailsManager = jpaUserDetailsManager;
-    }
-
+    private static final String H2_CONSOLE = "/h2-console/**";
 
     @Bean
-    @Order(2)
+    @Order(1)
     SecurityFilterChain h2ConsoleSecurityFilterChain (HttpSecurity http) throws Exception {
         return http
-                .securityMatcher(AntPathRequestMatcher.antMatcher(UrlPath.H2_CONSOLE))
-                .authorizeHttpRequests(auth -> auth.requestMatchers(AntPathRequestMatcher.antMatcher(UrlPath.H2_CONSOLE)).permitAll())
-                .csrf(csrf -> csrf.ignoringRequestMatchers(AntPathRequestMatcher.antMatcher(UrlPath.H2_CONSOLE)))
+                .securityMatcher(AntPathRequestMatcher.antMatcher(H2_CONSOLE))
+                .authorizeHttpRequests(auth -> auth.requestMatchers(AntPathRequestMatcher.antMatcher(H2_CONSOLE)).permitAll())
+                .csrf(csrf -> csrf.ignoringRequestMatchers(AntPathRequestMatcher.antMatcher(H2_CONSOLE)))
                 .headers(headers -> headers.frameOptions().disable())
                 .build();
     }
 
     @Bean
-    @Order(3)
+    @Order(2)
     SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         return http
                 .authorizeHttpRequests(auth -> {
                             auth.requestMatchers("/").permitAll();
                             auth.requestMatchers("/static/**").permitAll();
                             auth.requestMatchers("/activate/**").permitAll();
-                            auth.requestMatchers(UrlPath.ERROR).permitAll();
-                            auth.requestMatchers(UrlPath.REGISTRATION).permitAll();
-                            auth.requestMatchers(UrlPath.LOGIN).permitAll();
+                            auth.requestMatchers("/error").permitAll();
+                            auth.requestMatchers("/registration").permitAll();
+                            auth.requestMatchers("/login").permitAll();
                             auth.anyRequest().authenticated();
                         }
                 )

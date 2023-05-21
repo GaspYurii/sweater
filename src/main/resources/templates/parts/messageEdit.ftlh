@@ -7,14 +7,14 @@
         <button type="submit" class="btn btn-primary">Search</button>
     </div>
 </form>
-<#if message??>
+
 <form method="post" enctype="multipart/form-data" class="row mb-3 mt-3">
     <input type="hidden" name="_csrf" value="${_csrf.token}"/>
-    <input type="hidden" name="id" value="${message.id}" />
+    <input type="hidden" name="id" value="<#if message??>${message.id}</#if>" />
     <div class="col-sm-6">
         <div class="input-group mt-2">
             <input type="text" name="text" placeholder="Enter message"
-                   value="${message.text}"
+                   value="<#if message??>${message.text}</#if>"
                    class="form-control ${(textError??)?string('is-invalid', '')}">
             <#if textError??>
                 <div class="invalid-feedback">
@@ -24,7 +24,7 @@
         </div>
         <div class="input-group mt-2">
             <input type="text" name="tag" placeholder="Enter tag"
-                   value="${message.tag}"
+                   value="<#if message??>${message.tag}</#if>"
                    class="form-control ${(tagError??)?string('is-invalid', '')}">
             <#if tagError??>
                 <div class="invalid-feedback">
@@ -38,4 +38,3 @@
         </div>
     </div>
 </form>
-</#if>
