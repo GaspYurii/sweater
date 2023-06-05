@@ -5,17 +5,12 @@ import org.springframework.security.core.userdetails.UserDetails;
 
 import java.io.Serial;
 import java.util.Collection;
+import java.util.Objects;
 
-public class SecurityUser implements UserDetails {
+public record SecurityUser(User user) implements UserDetails {
 
     @Serial
     private static final long serialVersionUID = 8514957138524205734L;
-
-    private final transient User user;
-
-    public SecurityUser(User user) {
-        this.user = user;
-    }
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
@@ -24,7 +19,7 @@ public class SecurityUser implements UserDetails {
 
     @Override
     public String getUsername() {
-        return user != null? user.getUsername() : "<none>";
+        return user != null ? user.getUsername() : "<none>";
     }
 
     @Override
@@ -52,10 +47,6 @@ public class SecurityUser implements UserDetails {
         return user.isActive();
     }
 
-    public User getUser() {
-        return this.user;
-    }
-
     public boolean isAdmin() {
         return user.isAdmin();
     }
@@ -63,4 +54,19 @@ public class SecurityUser implements UserDetails {
     public String getEmail() {
         return user.getEmail();
     }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj == this) return true;
+        if (obj == null || obj.getClass() != this.getClass()) return false;
+        var that = (SecurityUser) obj;
+        return Objects.equals(this.user, that.user);
+    }
+
+    @Override
+    public String toString() {
+        return "SecurityUser[" +
+                "user=" + user + ']';
+    }
+
 }

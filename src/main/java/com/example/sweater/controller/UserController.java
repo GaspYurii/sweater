@@ -71,7 +71,7 @@ public class UserController {
             @RequestParam("password") String password,
             @RequestParam("email") String email
     ) {
-            userService.updateProfile(currentUser.getUser(), password, email);
+            userService.updateProfile(currentUser.user(), password, email);
 
         return "redirect:profile";
     }
@@ -80,7 +80,7 @@ public class UserController {
     public String subscribe(
             @AuthenticationPrincipal SecurityUser currentUser,
             @PathVariable User user) {
-        userService.subscribe(currentUser.getUser(), user);
+        userService.subscribe(currentUser.user(), user);
 
         return "redirect:/messages/" + user.getId();
     }
@@ -89,7 +89,7 @@ public class UserController {
     public String unSubscribe(
             @AuthenticationPrincipal SecurityUser currentUser,
             @PathVariable User user) {
-        userService.unSubscribe(currentUser.getUser(), user);
+        userService.unSubscribe(currentUser.user(), user);
 
         return "redirect:/messages/" + user.getId();
     }

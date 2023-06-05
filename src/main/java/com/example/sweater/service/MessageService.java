@@ -36,7 +36,7 @@ public class MessageService {
     }
 
     public void addMessage(SecurityUser securityUser, Message message, BindingResult bindingResult, Model model, MultipartFile file) throws IOException {
-        message.setAuthor(securityUser.getUser());
+        message.setAuthor(securityUser.user());
 
         if (bindingResult.hasErrors()) {
             Map<String, String> errorsMap = ControllerUtils.getErrorsMap(bindingResult);
@@ -58,7 +58,7 @@ public class MessageService {
                               String tag,
                               MultipartFile file) throws IOException {
 
-        if (message.getAuthor().equals(currentUser.getUser())) {
+        if (message.getAuthor().equals(currentUser.user())) {
             if (!StringUtils.isEmpty(text)) { message.setText(text); }
             if (!StringUtils.isEmpty(tag)) { message.setTag(tag); }
             saveFile(message, file);

@@ -1,5 +1,6 @@
 package com.example.sweater.config;
 
+import com.example.sweater.service.JpaUserDetailsManager;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.annotation.Order;
@@ -16,6 +17,11 @@ import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 @EnableMethodSecurity
 public class WebSecurityConfig {
     private static final String H2_CONSOLE = "/h2-console/**";
+    private final JpaUserDetailsManager userDetails;
+
+    public WebSecurityConfig(JpaUserDetailsManager userDetails) {
+        this.userDetails = userDetails;
+    }
 
     @Bean
     @Order(1)
@@ -42,6 +48,7 @@ public class WebSecurityConfig {
                             auth.anyRequest().authenticated();
                         }
                 )
+                .userDetailsService(userDetails)
                 .formLogin()
                 .loginPage("/login")
                 .and()
