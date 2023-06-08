@@ -3,17 +3,21 @@ package com.example.sweater.service;
 import com.example.sweater.model.Role;
 import com.example.sweater.model.User;
 import com.example.sweater.repository.UserRepository;
+
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
+
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.ui.Model;
 
 import java.util.Arrays;
 import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
+
 
 @Service
 @Slf4j
@@ -123,5 +127,9 @@ public class UserService {
         user.getSubscribers().remove(currentUser);
 
         userRepository.save(user);
+    }
+
+    public void findAll(Model model) {
+        model.addAttribute("users", userRepository.findAll());
     }
 }

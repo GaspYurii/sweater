@@ -43,7 +43,7 @@ public class MessageController {
             @RequestParam("file") MultipartFile file
     ) throws IOException {
 
-        messageService.addMessage(securityUser, message, bindingResult, model, file);
+        messageService.addMessage(securityUser.user(), message, bindingResult, model, file);
 
         Iterable<Message> messages = messageRepository.findAll();
         model.addAttribute(MESSAGES, messages);
@@ -81,7 +81,7 @@ public class MessageController {
             @RequestParam("file") MultipartFile file
     ) throws IOException {
 
-        messageService.updateMessage(currentUser, message, text, tag, file);
+        messageService.updateMessage(currentUser.user(), message, text, tag, file);
 
         return "redirect:/messages/" + user;
     }

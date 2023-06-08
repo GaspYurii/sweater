@@ -2,10 +2,12 @@ package com.example.sweater.service;
 
 import com.example.sweater.controller.ControllerUtils;
 import com.example.sweater.model.Message;
-import com.example.sweater.model.SecurityUser;
+import com.example.sweater.model.User;
 import com.example.sweater.repository.MessageRepository;
+
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
+
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.ui.Model;
@@ -35,8 +37,15 @@ public class MessageService {
         return messages;
     }
 
-    public void addMessage(SecurityUser securityUser, Message message, BindingResult bindingResult, Model model, MultipartFile file) throws IOException {
-        message.setAuthor(securityUser.user());
+    public void addMessage(
+            User user,
+            Message message,
+            BindingResult bindingResult,
+            Model model,
+            MultipartFile file
+    ) throws IOException {
+
+        message.setAuthor(user);
 
         if (bindingResult.hasErrors()) {
             Map<String, String> errorsMap = ControllerUtils.getErrorsMap(bindingResult);
@@ -52,13 +61,15 @@ public class MessageService {
         }
     }
 
-    public void updateMessage(SecurityUser currentUser,
-                              Message message,
-                              String text,
-                              String tag,
-                              MultipartFile file) throws IOException {
+    public void updateMessage(
+            User currentUser,
+            Message message,
+            String text,
+            String tag,
+            MultipartFile file
+    ) throws IOException {
 
-        if (message.getAuthor().equals(currentUser.user())) {
+        if (message.getAuthor().equals(currentUser)) {
             if (!StringUtils.isEmpty(text)) { message.setText(text); }
             if (!StringUtils.isEmpty(tag)) { message.setTag(tag); }
             saveFile(message, file);

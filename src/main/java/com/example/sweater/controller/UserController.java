@@ -3,7 +3,6 @@ package com.example.sweater.controller;
 import com.example.sweater.model.Role;
 import com.example.sweater.model.SecurityUser;
 import com.example.sweater.model.User;
-import com.example.sweater.repository.UserRepository;
 import com.example.sweater.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -22,13 +21,12 @@ import java.util.Map;
 public class UserController {
     private static final String USERS = "users";
 
-    private final UserRepository userRepository;
     private final UserService userService;
 
     @GetMapping("/users")
     @PreAuthorize("hasAuthority('ADMIN')")
     public String getUsers(Model model) {
-        model.addAttribute(USERS, userRepository.findAll());
+        userService.findAll(model);
         return "userList";
     }
 
