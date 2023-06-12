@@ -3,15 +3,19 @@ package com.example.sweater.model;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 import org.hibernate.validator.constraints.Length;
 
+import java.util.Objects;
+
 @Entity
-@Data
+@Getter
+@Setter
 @Table(name = "messages")
 public class Message {
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.AUTO, generator = "messages_seq")
     private Long id;
 
     @Column(nullable = false)
@@ -40,5 +44,18 @@ public class Message {
 
     public String getAuthorName() {
         return author.getUsername();
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Message message = (Message) o;
+        return Objects.equals(text, message.text) && Objects.equals(tag, message.tag) && Objects.equals(filename, message.filename) && Objects.equals(author, message.author);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(text, tag, filename, author);
     }
 }

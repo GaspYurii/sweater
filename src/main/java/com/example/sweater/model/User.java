@@ -17,7 +17,7 @@ import java.util.Set;
 @Table(name = "users")
 public class User implements Serializable {
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.AUTO, generator = "users_seq")
     private Long id;
 
     @NotBlank(message = "Username cannot be empty")

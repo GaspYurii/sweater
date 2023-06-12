@@ -6,4 +6,4 @@ insert into messages(id, text, tag, user_id) values
 (3, 'third', 'my-tag', 1),
 (4, 'fourth', 'another', 1);
 
-alter sequence messages_seq restart with 10;
+alter sequence messages_seq restart with 100;

@@ -10,7 +10,6 @@ import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
-import org.springframework.transaction.annotation.Transactional;
 
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.security.test.web.servlet.response.SecurityMockMvcResultMatchers.authenticated;
@@ -19,7 +18,6 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.xpath;
 
-@Transactional
 @SpringBootTest
 @AutoConfigureMockMvc
 @WithUserDetails("dru")
@@ -72,7 +70,7 @@ class MessageControllerTest {
                 .andDo(print())
                 .andExpect(authenticated())
                 .andExpect(xpath("//*[@id='message-list']/div").nodeCount(5))
-                .andExpect(xpath("//*[@id='message-list']/div/div[@data-id=10]/div/p").string("fifth"))
-                .andExpect(xpath("//*[@id='message-list']/div/div[@data-id=10]/div/h5").string("#new one"));
+                .andExpect(xpath("//*[@id='message-list']/div/div[@data-id=51]/div/p").string("fifth"))
+                .andExpect(xpath("//*[@id='message-list']/div/div[@data-id=51]/div/h5").string("#new one"));
     }
 }
