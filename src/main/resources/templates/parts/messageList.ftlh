@@ -2,10 +2,10 @@
 
 <div class="mt-3"><h4>Messages</h4></div>
 
-<div class="row row-cols-1 row-cols-md-3 g-4">
+<div id="message-list" class="row row-cols-1 row-cols-md-3 g-4">
     <#list messages as message>
         <div class="col">
-            <div class="card" >
+            <div class="card" data-id="${message.id}">
                 <#if message.filename??><img src="/img/${message.filename}"></#if>
                 <div class="card-body">
                     <h5 class="card-title">#${message.tag}</h5>

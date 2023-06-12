@@ -3,7 +3,6 @@ package com.example.sweater.controller;
 import com.example.sweater.model.Message;
 import com.example.sweater.model.SecurityUser;
 import com.example.sweater.model.User;
-import com.example.sweater.repository.MessageRepository;
 import com.example.sweater.service.MessageService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -15,15 +14,16 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.util.Map;
 import java.util.Set;
 
 @Controller
 @RequiredArgsConstructor
 @RequestMapping({"/messages", "/messages/"})
 public class MessageController {
+    public static final String MESSAGE ="message";
     public static final String MESSAGES ="messages";
 
-    private final MessageRepository messageRepository;
     private final MessageService messageService;
 
     @GetMapping
@@ -36,16 +36,25 @@ public class MessageController {
 
     @PostMapping
     public String addMessage(
-            @AuthenticationPrincipal SecurityUser securityUser,
+            @AuthenticationPrincipal SecurityUser currentUser,
             @Valid Message message,
             BindingResult bindingResult,
             Model model,
             @RequestParam("file") MultipartFile file
     ) throws IOException {
+        message.setAuthor(currentUser.user());
 
-        messageService.addMessage(securityUser.user(), message, bindingResult, model, file);
+        if (bindingResult.hasErrors()) {
+            Map<String, String> errorsMap = ControllerUtils.getErrorsMap(bindingResult);
+            model.mergeAttributes(errorsMap);
+            model.addAttribute(MESSAGE, message);
+        } else {
+            messageService.saveFile(message, file);
+            model.addAttribute(MESSAGE, null);
+            messageService.saveMessage(message);
+        }
 
-        Iterable<Message> messages = messageRepository.findAll();
+        Iterable<Message> messages = messageService.getMessages();
         model.addAttribute(MESSAGES, messages);
 
         return MESSAGES;
@@ -65,7 +74,7 @@ public class MessageController {
         model.addAttribute("subscribersCount", user.getSubscribers().size());
         model.addAttribute("isSubscriber", user.getSubscribers().contains(currentUser.user()));
         model.addAttribute(MESSAGES, messages);
-        model.addAttribute("message", message);
+        model.addAttribute(MESSAGE, message);
         model.addAttribute("isCurrentUser", currentUser.user().equals(user));
 
         return "userMessages";
@@ -80,7 +89,6 @@ public class MessageController {
             @RequestParam("tag") String tag,
             @RequestParam("file") MultipartFile file
     ) throws IOException {
-
         messageService.updateMessage(currentUser.user(), message, text, tag, file);
 
         return "redirect:/messages/" + user;

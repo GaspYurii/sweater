@@ -1,22 +1,16 @@
 package com.example.sweater.service;
 
-import com.example.sweater.controller.ControllerUtils;
 import com.example.sweater.model.Message;
 import com.example.sweater.model.User;
 import com.example.sweater.repository.MessageRepository;
-
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
-
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
-import org.springframework.ui.Model;
-import org.springframework.validation.BindingResult;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.Map;
 import java.util.UUID;
 
 @Service
@@ -37,28 +31,8 @@ public class MessageService {
         return messages;
     }
 
-    public void addMessage(
-            User user,
-            Message message,
-            BindingResult bindingResult,
-            Model model,
-            MultipartFile file
-    ) throws IOException {
-
-        message.setAuthor(user);
-
-        if (bindingResult.hasErrors()) {
-            Map<String, String> errorsMap = ControllerUtils.getErrorsMap(bindingResult);
-            model.mergeAttributes(errorsMap);
-            model.addAttribute("message", message);
-        } else {
-
-            saveFile(message, file);
-
-            model.addAttribute("message", null);
-
-            messageRepository.save(message);
-        }
+    public Iterable<Message> getMessages() {
+        return getMessages(null);
     }
 
     public void updateMessage(
@@ -79,16 +53,20 @@ public class MessageService {
     }
 
     public void saveFile(Message message, MultipartFile file) throws IOException {
-        if (file != null && !file.getOriginalFilename().isEmpty()) {
+        if (
+                file != null &&
+                file.getOriginalFilename() != null &&
+                !file.getOriginalFilename().isEmpty()
+        ) {
             File uploadDir = new File((uploadPath));
-
-            if (!uploadDir.exists()) uploadDir.mkdir();
-
+            if (!uploadDir.exists()) { uploadDir.mkdir(); }
             String resultFilename = UUID.randomUUID() + "." + file.getOriginalFilename();
-
             file.transferTo(new File(uploadPath + "/" + resultFilename));
-
             message.setFilename(resultFilename);
         }
+    }
+
+    public void saveMessage(Message message) {
+        messageRepository.save(message);
     }
 }
