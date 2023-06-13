@@ -1,5 +1,5 @@
-create sequence messages_seq start with 1 increment by 50;
-create sequence users_seq start with 1 increment by 50;
+create sequence messages_seq start with 1 increment by 1;
+create sequence users_seq start with 1 increment by 1;
 
 create table messages (
     id long not null,

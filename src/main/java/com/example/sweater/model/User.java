@@ -18,6 +18,7 @@ import java.util.Set;
 public class User implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO, generator = "users_seq")
+    @SequenceGenerator(name = "users_seq", allocationSize = 1)
     private Long id;
 
     @NotBlank(message = "Username cannot be empty")

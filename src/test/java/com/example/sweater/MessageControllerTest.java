@@ -70,7 +70,7 @@ class MessageControllerTest {
                 .andDo(print())
                 .andExpect(authenticated())
                 .andExpect(xpath("//*[@id='message-list']/div").nodeCount(5))
-                .andExpect(xpath("//*[@id='message-list']/div/div[@data-id=51]/div/p").string("fifth"))
-                .andExpect(xpath("//*[@id='message-list']/div/div[@data-id=51]/div/h5").string("#new one"));
+                .andExpect(xpath("//*[@id='message-list']/div/div[@data-id=10]/div/p").string("fifth"))
+                .andExpect(xpath("//*[@id='message-list']/div/div[@data-id=10]/div/h5").string("#new one"));
     }
 }

@@ -16,6 +16,7 @@ import java.util.Objects;
 public class Message {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO, generator = "messages_seq")
+    @SequenceGenerator(name = "messages_seq", allocationSize = 1)
     private Long id;
 
     @Column(nullable = false)
