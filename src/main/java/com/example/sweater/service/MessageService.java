@@ -6,6 +6,8 @@ import com.example.sweater.repository.MessageRepository;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -21,18 +23,19 @@ public class MessageService {
     @Value("${upload.path}")
     private String uploadPath;
 
-    public Iterable<Message> getMessages(String filter) {
-        Iterable<Message> messages;
+    public Page<Message> getMessages(String filter, Pageable pageable) {
+        Page<Message> page;
         if (filter != null && !filter.isEmpty()) {
-            messages = messageRepository.findByTag(filter);
+            page = messageRepository.findByTag(filter, pageable);
         } else {
-            messages = messageRepository.findAll();
+            page = messageRepository.findAll(pageable);
         }
-        return messages;
+
+        return page;
     }
 
-    public Iterable<Message> getMessages() {
-        return getMessages(null);
+    public Iterable<Message> getMessages(Pageable pageble) {
+        return getMessages(null, pageble);
     }
 
     public void updateMessage(
@@ -68,5 +71,9 @@ public class MessageService {
 
     public void saveMessage(Message message) {
         messageRepository.save(message);
+    }
+
+    public Iterable<Message> getMessages() {
+        return messageRepository.findAll();
     }
 }

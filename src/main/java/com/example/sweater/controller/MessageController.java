@@ -6,6 +6,10 @@ import com.example.sweater.model.User;
 import com.example.sweater.service.MessageService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -21,16 +25,23 @@ import java.util.Set;
 @RequiredArgsConstructor
 @RequestMapping({"/messages", "/messages/"})
 public class MessageController {
-    public static final String MESSAGE ="message";
-    public static final String MESSAGES ="messages";
+    public static final String MESSAGE = "message";
+    public static final String MESSAGES = "messages";
 
     private final MessageService messageService;
 
     @GetMapping
-    public String getMessages(@RequestParam(required = false, defaultValue = "") String filter, Model model) {
-        Iterable<Message> messages = messageService.getMessages(filter);
+    public String getMessages(
+            @RequestParam(required = false, defaultValue = "") String filter,
+            Model model,
+            @PageableDefault(sort = { "id" }, direction = Sort.Direction.DESC) Pageable pageable
+            ) {
+        Page<Message> page = messageService.getMessages(filter, pageable);
 
-        model.addAttribute(MESSAGES, messages);
+        model.addAttribute("page", page);
+        model.addAttribute("url", "/messages");
+        model.addAttribute("filter", filter);
+
         return MESSAGES;
     }
 
@@ -57,7 +68,7 @@ public class MessageController {
         Iterable<Message> messages = messageService.getMessages();
         model.addAttribute(MESSAGES, messages);
 
-        return MESSAGES;
+        return "redirect:" + MESSAGES;
     }
 
     @GetMapping("/{user}")
