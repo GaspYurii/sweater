@@ -19,7 +19,6 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.util.Map;
-import java.util.Set;
 
 @Controller
 @RequiredArgsConstructor
@@ -76,17 +75,19 @@ public class MessageController {
             @AuthenticationPrincipal SecurityUser currentUser,
             @PathVariable User user,
             Model model,
-            @RequestParam(required = false) Message message
+            @RequestParam(required = false) Message message,
+            @PageableDefault(sort = { "id" }, direction = Sort.Direction.DESC) Pageable pageable
     ) {
-        Set<Message> messages = user.getMessages();
+        Page<Message> page = messageService.getMessagesOfUser(pageable, user);
 
         model.addAttribute("userChannel", user);
         model.addAttribute("subscriptionsCount", user.getSubscriptions().size());
         model.addAttribute("subscribersCount", user.getSubscribers().size());
         model.addAttribute("isSubscriber", user.getSubscribers().contains(currentUser.user()));
-        model.addAttribute(MESSAGES, messages);
+        model.addAttribute("page", page);
         model.addAttribute(MESSAGE, message);
         model.addAttribute("isCurrentUser", currentUser.user().equals(user));
+        model.addAttribute("url", "/messages/" + user.getId());
 
         return "userMessages";
     }

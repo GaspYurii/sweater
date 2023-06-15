@@ -76,4 +76,8 @@ public class MessageService {
     public Iterable<Message> getMessages() {
         return messageRepository.findAll();
     }
+
+    public Page<Message> getMessagesOfUser(Pageable pageable, User user) {
+        return messageRepository.findAllByUser(pageable, user);
+    }
 }
