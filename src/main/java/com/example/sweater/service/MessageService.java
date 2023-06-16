@@ -72,7 +72,7 @@ public class MessageService {
         return messageRepository.findAll();
     }
 
-    public Page<MessageDto> getMessagesOfUser(Pageable pageable, User user) {
-        return messageRepository.findAllByUser(pageable, user);
+    public Page<MessageDto> getMessagesOfUser(Pageable pageable, User author, User user) {
+        return messageRepository.findAllByUser(pageable, author, user);
     }
 }

@@ -76,24 +76,24 @@ public class MessageController {
         return "redirect:" + MESSAGES;
     }
 
-    @GetMapping("/{user}")
+    @GetMapping("/{author}")
     public String userMessages(
             @AuthenticationPrincipal SecurityUser currentUser,
-            @PathVariable User user,
+            @PathVariable User author,
             Model model,
             @RequestParam(required = false) Message message,
             @PageableDefault(sort = { "id" }, direction = Sort.Direction.DESC) Pageable pageable
     ) {
-        Page<MessageDto> page = messageService.getMessagesOfUser(pageable, user);
+        Page<MessageDto> page = messageService.getMessagesOfUser(pageable, author, currentUser.user());
 
-        model.addAttribute("userChannel", user);
-        model.addAttribute("subscriptionsCount", user.getSubscriptions().size());
-        model.addAttribute("subscribersCount", user.getSubscribers().size());
-        model.addAttribute("isSubscriber", user.getSubscribers().contains(currentUser.user()));
+        model.addAttribute("userChannel", author);
+        model.addAttribute("subscriptionsCount", author.getSubscriptions().size());
+        model.addAttribute("subscribersCount", author.getSubscribers().size());
+        model.addAttribute("isSubscriber", author.getSubscribers().contains(currentUser.user()));
         model.addAttribute("page", page);
         model.addAttribute(MESSAGE, message);
-        model.addAttribute("isCurrentUser", currentUser.user().equals(user));
-        model.addAttribute("url", "/messages/" + user.getId());
+        model.addAttribute("isCurrentUser", currentUser.user().equals(author));
+        model.addAttribute("url", "/messages/" + author.getId());
 
         return "userMessages";
     }
