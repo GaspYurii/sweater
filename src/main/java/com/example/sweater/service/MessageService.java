@@ -2,6 +2,7 @@ package com.example.sweater.service;
 
 import com.example.sweater.model.Message;
 import com.example.sweater.model.User;
+import com.example.sweater.model.dto.MessageDto;
 import com.example.sweater.repository.MessageRepository;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
@@ -23,19 +24,13 @@ public class MessageService {
     @Value("${upload.path}")
     private String uploadPath;
 
-    public Page<Message> getMessages(String filter, Pageable pageable) {
-        Page<Message> page;
+    public Page<MessageDto> getMessages(String filter, Pageable pageable, User user) {
+
         if (filter != null && !filter.isEmpty()) {
-            page = messageRepository.findByTag(filter, pageable);
+            return messageRepository.findByTag(filter, pageable, user);
         } else {
-            page = messageRepository.findAll(pageable);
+            return messageRepository.findAll(pageable, user);
         }
-
-        return page;
-    }
-
-    public Iterable<Message> getMessages(Pageable pageble) {
-        return getMessages(null, pageble);
     }
 
     public void updateMessage(
@@ -77,7 +72,7 @@ public class MessageService {
         return messageRepository.findAll();
     }
 
-    public Page<Message> getMessagesOfUser(Pageable pageable, User user) {
+    public Page<MessageDto> getMessagesOfUser(Pageable pageable, User user) {
         return messageRepository.findAllByUser(pageable, user);
     }
 }

@@ -3,6 +3,7 @@ package com.example.sweater.controller;
 import com.example.sweater.model.Message;
 import com.example.sweater.model.SecurityUser;
 import com.example.sweater.model.User;
+import com.example.sweater.model.dto.MessageDto;
 import com.example.sweater.service.MessageService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -16,9 +17,13 @@ import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+import org.springframework.web.util.UriComponents;
+import org.springframework.web.util.UriComponentsBuilder;
 
 import java.io.IOException;
 import java.util.Map;
+import java.util.Set;
 
 @Controller
 @RequiredArgsConstructor
@@ -33,9 +38,10 @@ public class MessageController {
     public String getMessages(
             @RequestParam(required = false, defaultValue = "") String filter,
             Model model,
-            @PageableDefault(sort = { "id" }, direction = Sort.Direction.DESC) Pageable pageable
+            @PageableDefault(sort = { "id" }, direction = Sort.Direction.DESC) Pageable pageable,
+            @AuthenticationPrincipal SecurityUser currentUser
             ) {
-        Page<Message> page = messageService.getMessages(filter, pageable);
+        Page<MessageDto> page = messageService.getMessages(filter, pageable, currentUser.user());
 
         model.addAttribute("page", page);
         model.addAttribute("url", "/messages");
@@ -78,7 +84,7 @@ public class MessageController {
             @RequestParam(required = false) Message message,
             @PageableDefault(sort = { "id" }, direction = Sort.Direction.DESC) Pageable pageable
     ) {
-        Page<Message> page = messageService.getMessagesOfUser(pageable, user);
+        Page<MessageDto> page = messageService.getMessagesOfUser(pageable, user);
 
         model.addAttribute("userChannel", user);
         model.addAttribute("subscriptionsCount", user.getSubscriptions().size());
@@ -106,4 +112,29 @@ public class MessageController {
         return "redirect:/messages/" + user;
     }
 
+    @GetMapping("{message}/like")
+    public String like(
+            @AuthenticationPrincipal SecurityUser currentUser,
+            @PathVariable Message message,
+            RedirectAttributes redirectAttributes,
+            @RequestHeader(required = false) String referer
+    ) {
+        Set<User> likes = message.getLikes();
+
+        if (likes.contains(currentUser.user())) {
+            likes.remove(currentUser.user());
+        } else {
+            likes.add(currentUser.user());
+        }
+
+        likes.contains(currentUser.user());
+
+        UriComponents components = UriComponentsBuilder.fromHttpUrl(referer).build();
+
+        components.getQueryParams()
+                .entrySet()
+                .forEach(pair -> redirectAttributes.addAttribute(pair.getKey(), pair.getValue()));
+
+        return "redirect:" + components.getPath();
+    }
 }

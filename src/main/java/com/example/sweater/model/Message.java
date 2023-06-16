@@ -1,13 +1,16 @@
 package com.example.sweater.model;
 
 
+import com.example.sweater.model.util.MessageHelper;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.validator.constraints.Length;
 
+import java.util.HashSet;
 import java.util.Objects;
+import java.util.Set;
 
 @Entity
 @Getter
@@ -34,6 +37,14 @@ public class Message {
     @JoinColumn(name = "user_id")
     private User author;
 
+    @ManyToMany
+    @JoinTable(
+            name = "message_likes",
+            joinColumns = { @JoinColumn(name = "message_id") },
+            inverseJoinColumns = { @JoinColumn(name = "user_id") }
+    )
+    private Set<User> likes = new HashSet<>();
+
     public Message() {
     }
 
@@ -44,7 +55,7 @@ public class Message {
     }
 
     public String getAuthorName() {
-        return author.getUsername();
+        return MessageHelper.getAuthorName(author);
     }
 
     @Override
