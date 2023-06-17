@@ -23,7 +23,6 @@ import org.springframework.web.util.UriComponentsBuilder;
 
 import java.io.IOException;
 import java.util.Map;
-import java.util.Set;
 
 @Controller
 @RequiredArgsConstructor
@@ -119,22 +118,14 @@ public class MessageController {
             RedirectAttributes redirectAttributes,
             @RequestHeader(required = false) String referer
     ) {
-        Set<User> likes = message.getLikes();
-
-        if (likes.contains(currentUser.user())) {
-            likes.remove(currentUser.user());
-        } else {
-            likes.add(currentUser.user());
-        }
-
-        likes.contains(currentUser.user());
+        messageService.likeMessage(currentUser, message);
 
         UriComponents components = UriComponentsBuilder.fromHttpUrl(referer).build();
 
-        components.getQueryParams()
-                .entrySet()
-                .forEach(pair -> redirectAttributes.addAttribute(pair.getKey(), pair.getValue()));
+        components.getQueryParams().forEach(redirectAttributes::addAttribute);
 
         return "redirect:" + components.getPath();
     }
+
+
 }
