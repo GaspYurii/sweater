@@ -118,7 +118,7 @@ public class MessageController {
             RedirectAttributes redirectAttributes,
             @RequestHeader(required = false) String referer
     ) {
-        messageService.likeMessage(currentUser, message);
+        messageService.likeMessage(currentUser.user(), message);
 
         UriComponents components = UriComponentsBuilder.fromHttpUrl(referer).build();
 

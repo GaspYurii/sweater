@@ -1,7 +1,6 @@
 package com.example.sweater.service;
 
 import com.example.sweater.model.Message;
-import com.example.sweater.model.SecurityUser;
 import com.example.sweater.model.User;
 import com.example.sweater.model.dto.MessageDto;
 import com.example.sweater.repository.MessageRepository;
@@ -11,7 +10,6 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
@@ -79,14 +77,15 @@ public class MessageService {
         return messageRepository.findAllByUser(pageable, author, user);
     }
 
-    @Transactional
-    public void likeMessage(SecurityUser currentUser, Message message) {
+    public void likeMessage(User currentUser, Message message) {
         Set<User> likes = message.getLikes();
 
-        if (likes.contains(currentUser.user())) {
-            likes.remove(currentUser.user());
+        if (likes.contains(currentUser)) {
+            likes.remove(currentUser);
         } else {
-            likes.add(currentUser.user());
+            likes.add(currentUser);
         }
+
+        messageRepository.save(message);
     }
 }
