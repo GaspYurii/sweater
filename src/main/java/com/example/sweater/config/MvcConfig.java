@@ -1,16 +1,25 @@
 package com.example.sweater.config;
 
 
+import com.example.sweater.util.RedirectInterceptor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.web.context.request.WebRequestInterceptor;
+import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
 import org.springframework.web.servlet.config.annotation.ViewControllerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 @Configuration
 public class MvcConfig implements WebMvcConfigurer {
+    private final WebRequestInterceptor requestInterceptor;
+
     @Value("${upload.path}")
     private String uploadPath;
+
+    public MvcConfig(WebRequestInterceptor requestInterceptor) {
+        this.requestInterceptor = requestInterceptor;
+    }
 
     @Override
     public void addViewControllers(ViewControllerRegistry registry) {
@@ -24,5 +33,10 @@ public class MvcConfig implements WebMvcConfigurer {
                 .addResourceLocations("file://" + uploadPath + "/");
         registry.addResourceHandler("/static/**")
                 .addResourceLocations("classpath:/static/");
+    }
+
+    @Override
+    public void addInterceptors(InterceptorRegistry registry) {
+       registry.addInterceptor(new RedirectInterceptor(requestInterceptor));
     }
 }
