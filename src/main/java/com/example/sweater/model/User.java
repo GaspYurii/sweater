@@ -39,7 +39,7 @@ public class User implements Serializable {
     @ElementCollection(targetClass = Role.class, fetch = FetchType.EAGER)
     @CollectionTable(name = "user_role", joinColumns = @JoinColumn(name = "user_id"))
     @Enumerated(EnumType.STRING)
-    private Set<Role> roles;
+    private Set<Role> roles = new HashSet<>();
 
     @OneToMany(mappedBy = "author", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private Set<Message> messages;
@@ -67,7 +67,6 @@ public class User implements Serializable {
         this.username = username;
         this.password = password;
         this.active = false;
-        this.roles = new HashSet<>();
         this.roles.add(Role.USER);
     }
 
